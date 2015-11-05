@@ -28,10 +28,10 @@ public class Movie {
         this.mSynopsis = synopsis;
     }
 
-    public float getUserRating() {
+    public double getUserRating() {
         return mUserRating;
     }
-    public void setmUserRating(float userRating) {
+    public void setmUserRating(double userRating) {
         this.mUserRating = userRating;
     }
 
@@ -45,6 +45,6 @@ public class Movie {
     private String mImgUri;
     private String mTitle;
     private String mSynopsis;
-    private float mUserRating;
+    private double mUserRating;
     private Date mReleaseDate;
 }

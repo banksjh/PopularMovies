@@ -9,13 +9,13 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 
-public class MovieAdapter extends ArrayAdapter<String> {
+public class MovieAdapter extends ArrayAdapter<Movie> {
 
     public MovieAdapter(Context context, int resource) {
         super(context, resource);
     }
 
-    public MovieAdapter(Context context, int resource, String[] objects) {
+    public MovieAdapter(Context context, int resource, Movie[] objects) {
         super(context, resource, objects);
     }
 
@@ -30,7 +30,7 @@ public class MovieAdapter extends ArrayAdapter<String> {
         }
         imgView.setAdjustViewBounds(true);
         imgView.setMaxWidth(10);
-        Picasso.with(getContext()).load(getItem(position)).placeholder(R.mipmap.ic_launcher).into(imgView);
+        Picasso.with(getContext()).load(getItem(position).getImageUri()).placeholder(R.mipmap.ic_launcher).into(imgView);
         return imgView;
     }
 }

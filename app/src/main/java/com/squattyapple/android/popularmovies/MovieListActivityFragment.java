@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -28,6 +29,8 @@ public class MovieListActivityFragment extends Fragment {
 
     public MovieListActivityFragment() {
     }
+
+    private MovieAdapter mMovieAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,47 +41,50 @@ public class MovieListActivityFragment extends Fragment {
         Picasso.with(getContext()).setIndicatorsEnabled(true);
         Picasso.with(getContext()).setLoggingEnabled(true);
 
+        mMovieAdapter = new MovieAdapter(getContext(), 0);
+
         GetMoviesTask loadTask = new GetMoviesTask();
-        loadTask.execute(GetMoviesTask.SortOrder.SORT_BY_MOST_POPULAR);
-
-
-        //placeholder image URIs
-        String[] imgUris = {"http://i.imgur.com/DvpvklR.png", "http://i.imgur.com/DvpvklR.png",
-                "http://i.imgur.com/DvpvklR.png", "http://i.imgur.com/DvpvklR.png", "http://i.imgur.com/DvpvklR.png",
-                "http://i.imgur.com/DvpvklR.png", "http://i.imgur.com/DvpvklR.png", "http://i.imgur.com/DvpvklR.png"};
-
-        MovieAdapter adapter = new MovieAdapter(getContext(), 0, imgUris);
+        loadTask.execute(mMovieAdapter);
 
         GridView view = (GridView)rootView.findViewById(R.id.moviePosterGridView);
-        view.setAdapter(adapter);
+        view.setAdapter(mMovieAdapter);
+
+
 
         return rootView;
     }
 
-    private static class GetMoviesTask extends AsyncTask<GetMoviesTask.SortOrder, Void, Void> {
-        public final String LOG_TAG = GetMoviesTask.class.getSimpleName();
+    private static class GetMoviesTask extends AsyncTask<MovieAdapter, Void, ArrayList<Movie>> {
+        private final String LOG_TAG = GetMoviesTask.class.getSimpleName();
+        private MovieAdapter mMovieAdapter;
 
         @Override
-        protected Void doInBackground(SortOrder... params) {
+        protected void onPostExecute(ArrayList<Movie> movies) {
+            mMovieAdapter.clear();
+            mMovieAdapter.addAll(movies);
+        }
+
+        @Override
+        protected ArrayList<Movie> doInBackground(MovieAdapter... params) {
+
+            mMovieAdapter = params[0];
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
+            String jsonStr = null;
+
             final String MOVIE_DB_BASE_URL = "http://api.themoviedb.org/3/discover/movie";
             final String API_KEY_PARAM = "api_key";
             final String SORT_BY_PARAM = "sort_by";
-
-            String sort = "release_date.desc";
-
-            if (params[0] == SortOrder.SORT_BY_MOST_POPULAR){
-                sort = "popularity.desc";
-            }
+            final String SORT_BY_RELEASE = "release_date.desc";
+            final String SORT_BY_POPULARITY= "popularity.desc";
 
             Uri builtUri = Uri.parse(MOVIE_DB_BASE_URL).buildUpon()
                     .appendQueryParameter(API_KEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
-                    .appendQueryParameter(SORT_BY_PARAM, sort).build();
+                    .appendQueryParameter(SORT_BY_PARAM, SORT_BY_POPULARITY).build();
 
             try {
                 URL url = new URL(builtUri.toString());
@@ -110,15 +116,24 @@ public class MovieListActivityFragment extends Fragment {
                     return null;
                 }
 
+                jsonStr = buffer.toString();
+
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally{
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
             }
 
-            return null;
-        }
-
-        public enum SortOrder{
-            SORT_BY_NEWEST, SORT_BY_MOST_POPULAR
+            return Utils.parseMoviesFromJson(jsonStr);
         }
     }
 }
