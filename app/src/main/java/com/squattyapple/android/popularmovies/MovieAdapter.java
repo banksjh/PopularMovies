@@ -28,7 +28,9 @@ public class MovieAdapter extends ArrayAdapter<String> {
         }else {
             imgView = new ImageView(getContext());
         }
-        Picasso.with(getContext()).load(getItem(position)).into(imgView);
+        imgView.setAdjustViewBounds(true);
+        imgView.setMaxWidth(10);
+        Picasso.with(getContext()).load(getItem(position)).placeholder(R.mipmap.ic_launcher).into(imgView);
         return imgView;
     }
 }

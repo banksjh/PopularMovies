@@ -22,6 +22,13 @@ public class MovieListActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_list, container, false);
+
+        //TODO: remove this after debugging
+        Picasso.with(getContext()).setIndicatorsEnabled(true);
+        Picasso.with(getContext()).setLoggingEnabled(true);
+
+
+        //placeholder image URIs
         String[] imgUris = {"http://i.imgur.com/DvpvklR.png", "http://i.imgur.com/DvpvklR.png",
                 "http://i.imgur.com/DvpvklR.png", "http://i.imgur.com/DvpvklR.png", "http://i.imgur.com/DvpvklR.png",
                 "http://i.imgur.com/DvpvklR.png", "http://i.imgur.com/DvpvklR.png", "http://i.imgur.com/DvpvklR.png"};
