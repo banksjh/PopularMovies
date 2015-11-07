@@ -4,11 +4,16 @@
     tools:showIn="@layout/activity_movie_list" tools:context=".MovieListActivityFragment">
 
     <GridView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:id="@+id/moviePosterGridView"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         android:gravity="center"
-        android:columnWidth="150dp"/>
+        android:columnWidth="150dp"
+        android:clickable="true"
+        android:drawSelectorOnTop="true"
+        android:contextClickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
 </FrameLayout>

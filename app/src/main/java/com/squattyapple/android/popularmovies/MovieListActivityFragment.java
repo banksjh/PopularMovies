@@ -1,5 +1,6 @@
 package com.squattyapple.android.popularmovies;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -8,8 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -37,23 +40,25 @@ public class MovieListActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
-        //TODO: remove this after debugging
-        Picasso.with(getContext()).setIndicatorsEnabled(true);
-        Picasso.with(getContext()).setLoggingEnabled(true);
-
         mMovieAdapter = new MovieAdapter(getContext(), 0);
 
         GetMoviesTask loadTask = new GetMoviesTask();
         loadTask.execute(mMovieAdapter);
 
-        GridView view = (GridView)rootView.findViewById(R.id.moviePosterGridView);
-        view.setAdapter(mMovieAdapter);
+        GridView movieGridView = (GridView)rootView.findViewById(R.id.moviePosterGridView);
+        movieGridView.setAdapter(mMovieAdapter);
 
-
+        movieGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startActivity(new Intent(getContext(), MovieDetailActivity.class).putExtra("Movie", ((Movie)parent.getItemAtPosition(position))));
+            }
+        });
 
         return rootView;
     }
 
+
+    //AsyncTask to load movie data in the background
     private static class GetMoviesTask extends AsyncTask<MovieAdapter, Void, ArrayList<Movie>> {
         private final String LOG_TAG = GetMoviesTask.class.getSimpleName();
         private MovieAdapter mMovieAdapter;
@@ -79,7 +84,7 @@ public class MovieListActivityFragment extends Fragment {
             final String MOVIE_DB_BASE_URL = "http://api.themoviedb.org/3/discover/movie";
             final String API_KEY_PARAM = "api_key";
             final String SORT_BY_PARAM = "sort_by";
-            final String SORT_BY_RELEASE = "release_date.desc";
+            final String SORT_BY_RATING = "vote_average.desc";
             final String SORT_BY_POPULARITY= "popularity.desc";
 
             Uri builtUri = Uri.parse(MOVIE_DB_BASE_URL).buildUpon()
