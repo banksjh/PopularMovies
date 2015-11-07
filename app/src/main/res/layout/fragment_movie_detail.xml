@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -8,70 +8,73 @@
     tools:context="com.squattyapple.android.popularmovies.MovieDetailActivityFragment">
 
 
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:weightSum="1">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Original Title"
-            android:id="@+id/titleTextView"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_gravity="center_horizontal" />
+        android:id="@+id/scrollView" >
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            android:layout_height="match_parent"
+            android:weightSum="1">
 
-            <ImageView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/posterImageView"
-                android:layout_gravity="left|top"
-                android:src="@mipmap/ic_launcher"
-                android:minWidth="100dp"
-                android:minHeight="100dp" />
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Original Title"
+                android:id="@+id/titleTextView"
+                android:layout_gravity="center_horizontal" />
 
             <LinearLayout
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="15dp">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
 
-                <TextView
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Year"
-                    android:id="@+id/releaseDateTextView" />
+                    android:id="@+id/posterImageView"
+                    android:layout_gravity="start|top"
+                    android:src="@mipmap/ic_launcher"
+                    android:minWidth="185dp"
+                    android:maxWidth="185dp"
+                    android:adjustViewBounds="false"
+                    android:minHeight="277dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Rating"
-                    android:id="@+id/ratingTextView" />
+                    android:layout_marginLeft="15dp"
+                    android:layout_gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Year"
+                        android:id="@+id/releaseDateTextView" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Rating"
+                        android:id="@+id/ratingTextView" />
+                </LinearLayout>
+
             </LinearLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Synopsis"
+                android:id="@+id/synopsisTextView" />
+
         </LinearLayout>
+    </ScrollView>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Synopsis"
-            android:id="@+id/synopsisTextView" />
-
-    </LinearLayout>
-
-</RelativeLayout>
+</FrameLayout>

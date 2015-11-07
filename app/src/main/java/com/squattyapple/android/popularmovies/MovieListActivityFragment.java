@@ -1,8 +1,10 @@
 package com.squattyapple.android.popularmovies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +26,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -42,26 +46,36 @@ public class MovieListActivityFragment extends Fragment {
 
         mMovieAdapter = new MovieAdapter(getContext(), 0);
 
-        GetMoviesTask loadTask = new GetMoviesTask();
-        loadTask.execute(mMovieAdapter);
-
         GridView movieGridView = (GridView)rootView.findViewById(R.id.moviePosterGridView);
         movieGridView.setAdapter(mMovieAdapter);
 
+        //refreshMovies();
+
         movieGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(getContext(), MovieDetailActivity.class).putExtra("Movie", ((Movie)parent.getItemAtPosition(position))));
+                startActivity(new Intent(getContext(), MovieDetailActivity.class).putExtra("Movie", ((Movie) parent.getItemAtPosition(position))));
             }
         });
 
         return rootView;
     }
 
+    private void refreshMovies(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        GetMoviesTask loadTask = new GetMoviesTask();
+        loadTask.execute(prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_by_popularity_value)));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        refreshMovies();
+    }
 
     //AsyncTask to load movie data in the background
-    private static class GetMoviesTask extends AsyncTask<MovieAdapter, Void, ArrayList<Movie>> {
+    private class GetMoviesTask extends AsyncTask<String, Void, ArrayList<Movie>> {
         private final String LOG_TAG = GetMoviesTask.class.getSimpleName();
-        private MovieAdapter mMovieAdapter;
 
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
@@ -70,9 +84,8 @@ public class MovieListActivityFragment extends Fragment {
         }
 
         @Override
-        protected ArrayList<Movie> doInBackground(MovieAdapter... params) {
+        protected ArrayList<Movie> doInBackground(String... params) {
 
-            mMovieAdapter = params[0];
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -85,11 +98,18 @@ public class MovieListActivityFragment extends Fragment {
             final String API_KEY_PARAM = "api_key";
             final String SORT_BY_PARAM = "sort_by";
             final String SORT_BY_RATING = "vote_average.desc";
-            final String SORT_BY_POPULARITY= "popularity.desc";
+            final String SORT_BY_POPULARITY = "popularity.desc";
+
+            String sortParam;
+            if (params[0].equals(getString(R.string.pref_sort_by_rating_value))){
+                sortParam = SORT_BY_RATING;
+            } else {
+                sortParam = SORT_BY_POPULARITY;
+            }
 
             Uri builtUri = Uri.parse(MOVIE_DB_BASE_URL).buildUpon()
                     .appendQueryParameter(API_KEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
-                    .appendQueryParameter(SORT_BY_PARAM, SORT_BY_POPULARITY).build();
+                    .appendQueryParameter(SORT_BY_PARAM, sortParam).build();
 
             try {
                 URL url = new URL(builtUri.toString());
@@ -101,7 +121,7 @@ public class MovieListActivityFragment extends Fragment {
 
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 if (inputStream == null) {
                     // Nothing to do.
                     return null;
