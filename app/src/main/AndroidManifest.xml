@@ -37,6 +37,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.squattyapple.android.popularmovies.MovieListActivity" />
         </activity>
+        <provider
+            android:name=".data.generated.MovieProvider"
+            android:authorities="com.squattyapple.android.popularmovies.MovieProvider">
+        </provider>
     </application>
 
 </manifest>
