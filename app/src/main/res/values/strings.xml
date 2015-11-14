@@ -13,4 +13,6 @@
     <string name="pref_sort_by_popularity_value">popularity</string>
     <string name="pref_sort_by_rating">User Rating</string>
     <string name="pref_sort_by_rating_value">rating</string>
+    <string name="poster_content_desc">Movie Poster</string>
+    <string name="favorite_indicator_content_desc">Favorite Indicator</string>
 </resources>

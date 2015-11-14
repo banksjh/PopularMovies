@@ -7,7 +7,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/moviePosterImageView"
-        android:adjustViewBounds="true" />
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/poster_content_desc"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,19 +23,19 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_fav_movie"
             android:visibility="visible"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:id="@+id/favoriteMovieImgView"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/favorite_indicator_content_desc" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="6.5"
             android:id="@+id/movieRatingTextView"
-            android:layout_gravity="center_vertical|left"
+            android:layout_gravity="center_vertical|start"
             android:textColor="#ffffff"
             android:layout_centerVertical="true" />
     </RelativeLayout>
