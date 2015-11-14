@@ -99,20 +99,24 @@ public class MovieListActivityFragment extends Fragment {
             final String SORT_BY_PARAM = "sort_by";
             final String SORT_BY_RATING = "vote_average.desc";
             final String SORT_BY_POPULARITY = "popularity.desc";
+            final String MINIMUM_RATING_COUNT = "vote_count.gte";
 
-            String sortParam;
+            Uri queryUri;
+
             if (params[0].equals(getString(R.string.pref_sort_by_rating_value))){
-                sortParam = SORT_BY_RATING;
+                queryUri = Uri.parse(MOVIE_DB_BASE_URL).buildUpon()
+                        .appendQueryParameter(API_KEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
+                        .appendQueryParameter(SORT_BY_PARAM, SORT_BY_RATING)
+                        .appendQueryParameter(MINIMUM_RATING_COUNT, "5").build();
+
             } else {
-                sortParam = SORT_BY_POPULARITY;
+                queryUri = Uri.parse(MOVIE_DB_BASE_URL).buildUpon()
+                        .appendQueryParameter(API_KEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
+                        .appendQueryParameter(SORT_BY_PARAM, SORT_BY_POPULARITY).build();
             }
 
-            Uri builtUri = Uri.parse(MOVIE_DB_BASE_URL).buildUpon()
-                    .appendQueryParameter(API_KEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
-                    .appendQueryParameter(SORT_BY_PARAM, sortParam).build();
-
             try {
-                URL url = new URL(builtUri.toString());
+                URL url = new URL(queryUri.toString());
 
                 // Create the request to TheMovieDb, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
