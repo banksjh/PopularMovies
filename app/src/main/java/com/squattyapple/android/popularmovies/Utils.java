@@ -1,12 +1,9 @@
 package com.squattyapple.android.popularmovies;
 
 import android.util.Log;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-
 import org.json.*;
 
 
