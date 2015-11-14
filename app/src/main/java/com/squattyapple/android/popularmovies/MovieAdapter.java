@@ -1,18 +1,14 @@
 package com.squattyapple.android.popularmovies;
 
 import android.content.Context;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.support.v4.app.Fragment;
 
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 
 public class MovieAdapter extends ArrayAdapter<Movie> {
@@ -37,7 +33,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         ViewHolder holder = new ViewHolder(movieView);
         movieView.setTag(holder);
 
-        Picasso.with(getContext()).load(getItem(position).getImageUri()).placeholder(R.mipmap.ic_launcher).into(holder.posterView);
+        Picasso.with(getContext()).load(getItem(position).getPosterImageUri()).placeholder(R.mipmap.ic_launcher).into(holder.posterView);
         holder.ratingView.setText(String.format("%.1f", getItem(position).getUserRating()));
         holder.favoriteView.setVisibility(View.INVISIBLE);
 

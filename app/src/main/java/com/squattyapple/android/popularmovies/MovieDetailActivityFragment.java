@@ -16,7 +16,35 @@ import java.text.SimpleDateFormat;
  */
 public class MovieDetailActivityFragment extends Fragment {
 
+    ImageView mPosterImageView;
+    TextView mSynopsisTextView;
+    TextView mReleaseDateTextView;
+    TextView mRatingTextView;
+
     public MovieDetailActivityFragment() {
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy");
+        Intent intent = getActivity().getIntent();
+        if (intent != null){
+            Movie movie = intent.getParcelableExtra("Movie");
+
+            mSynopsisTextView.setText(movie.getSynopsis());
+
+
+
+            mReleaseDateTextView.setText(dateFormatter.format(movie.getReleaseDate()));
+            mRatingTextView.setText(Double.toString(movie.getUserRating()) + "/10");
+
+            Picasso.with(getContext()).load(movie.getPosterImageUri()).placeholder(R.mipmap.ic_launcher).into(mPosterImageView);
+
+            ((MovieDetailActivity)getActivity()).setActionBarTitle(movie.getTitle());
+            ((MovieDetailActivity)getActivity()).setActionBarImageUri(movie.getBackdropImageUri());
+        }
     }
 
     @Override
@@ -24,22 +52,11 @@ public class MovieDetailActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
-        ImageView imgView = (ImageView)rootView.findViewById(R.id.posterImageView);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy");
-        Intent intent = getActivity().getIntent();
-        if (intent != null){
-            Movie movie = intent.getParcelableExtra("Movie");
+        mSynopsisTextView = ((TextView)rootView.findViewById(R.id.synopsisTextView));
+        mReleaseDateTextView = ((TextView)rootView.findViewById(R.id.releaseDateTextView));
+        mRatingTextView = ((TextView)rootView.findViewById(R.id.ratingTextView));
+        mPosterImageView = ((ImageView)rootView.findViewById(R.id.posterImageView));
 
-            ((TextView)rootView.findViewById(R.id.titleTextView)).setText(movie.getTitle());
-            ((TextView)rootView.findViewById(R.id.synopsisTextView)).setText(movie.getSynopsis());
-
-
-
-            ((TextView)rootView.findViewById(R.id.releaseDateTextView)).setText(dateFormatter.format(movie.getReleaseDate()));
-            ((TextView)rootView.findViewById(R.id.ratingTextView)).setText(Double.toString(movie.getUserRating()) + "/10");
-
-            Picasso.with(getContext()).load(movie.getImageUri()).placeholder(R.mipmap.ic_launcher).into(imgView);
-        }
         return rootView;
     }
 }

@@ -18,7 +18,8 @@ public class Movie implements Parcelable {
     }
 
     private Movie(Parcel in) {
-        mImgUri = in.readString();
+        mPosterImgUri = in.readString();
+        mBackdropImgUri = in.readString();
         mTitle = in.readString();
         mSynopsis = in.readString();
         mUserRating = in.readDouble();
@@ -49,19 +50,23 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mImgUri);
+        dest.writeString(mPosterImgUri);
+        dest.writeString(mBackdropImgUri);
         dest.writeString(mTitle);
         dest.writeString(mSynopsis);
         dest.writeDouble(mUserRating);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-DD");
         dest.writeString(dateFormat.format(mReleaseDate));
     }
-    public String getImageUri(){
-        return mImgUri;
+    public String getPosterImageUri(){
+        return mPosterImgUri;
     }
     public void setImageUri(String uri){
-        mImgUri = uri;
+        mPosterImgUri = uri;
     }
+
+    public String getBackdropImageUri() { return mBackdropImgUri; }
+    public void setBackdropImageUri(String uri) { mBackdropImgUri = uri; }
 
     public String getTitle(){
         return mTitle;
@@ -92,7 +97,8 @@ public class Movie implements Parcelable {
     }
 
 
-    private String mImgUri;
+    private String mPosterImgUri;
+    private String mBackdropImgUri;
     private String mTitle;
     private String mSynopsis;
     private double mUserRating;

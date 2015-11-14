@@ -25,6 +25,7 @@ public class Utils {
                 movie.setSynopsis(jsonMovie.getString("overview"));
                 movie.setTitle(jsonMovie.getString("original_title"));
                 movie.setImageUri("http://image.tmdb.org/t/p/w185/" + jsonMovie.getString("poster_path"));
+                movie.setBackdropImageUri("http://image.tmdb.org/t/p/w780/" + jsonMovie.getString("backdrop_path"));
 
                 SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd");
                 movie.setReleaseDate(dateParser.parse(jsonMovie.getString("release_date")));
