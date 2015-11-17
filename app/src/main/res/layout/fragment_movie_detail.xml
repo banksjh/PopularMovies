@@ -56,6 +56,13 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:id="@+id/ratingTextView" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mark as Favorite"
+                        android:id="@+id/markAsFavButton"/>
+
                 </LinearLayout>
 
             </LinearLayout>
