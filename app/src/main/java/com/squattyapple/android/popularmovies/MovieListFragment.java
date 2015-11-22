@@ -25,9 +25,9 @@ import java.util.ArrayList;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieListActivityFragment extends Fragment {
+public class MovieListFragment extends Fragment {
 
-    public MovieListActivityFragment() {
+    public MovieListFragment() {
     }
 
     private MovieAdapter mMovieAdapter;
@@ -53,9 +53,12 @@ public class MovieListActivityFragment extends Fragment {
         return rootView;
     }
 
+    public void onListSettingChanged(){
+        refreshMovies();
+    }
+
     private void refreshMovies(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-
         GetMoviesTask loadTask = new GetMoviesTask();
         loadTask.execute(prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_by_popularity_value)));
     }

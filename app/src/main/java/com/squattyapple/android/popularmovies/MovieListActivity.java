@@ -1,11 +1,16 @@
 package com.squattyapple.android.popularmovies;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Spinner;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 public class MovieListActivity extends AppCompatActivity {
@@ -13,29 +18,31 @@ public class MovieListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_movie_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-    }
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_movie_list, menu);
-        return true;
-    }
+        final MovieListFragment listActivityFragment = (MovieListFragment)getSupportFragmentManager().findFragmentById(R.id.movie_list_fragment);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final List<String> sortStrings = Arrays.asList(getResources().getStringArray(R.array.pref_sort_list_values));
+        Spinner sortSpinner = (Spinner)toolbar.findViewById(R.id.sort_spinner);
+        String sortValue = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_by_popularity_value));
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        int sortIndex = sortStrings.indexOf(sortValue);
+        sortSpinner.setSelection(sortIndex);
 
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-        }
+        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                prefs.edit().putString(getString(R.string.pref_sort_key), sortStrings.get(position)).commit();
+                listActivityFragment.onListSettingChanged();
+            }
 
-        return super.onOptionsItemSelected(item);
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package com.squattyapple.android.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import com.squattyapple.android.popularmovies.data.MovieProvider;
+
 import java.text.SimpleDateFormat;
 
 /**
@@ -21,6 +24,8 @@ public class MovieDetailActivityFragment extends Fragment {
     TextView mReleaseDateTextView;
     TextView mRatingTextView;
 
+    Movie mMovie;
+
     public MovieDetailActivityFragment() {
     }
 
@@ -31,19 +36,19 @@ public class MovieDetailActivityFragment extends Fragment {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy");
         Intent intent = getActivity().getIntent();
         if (intent != null){
-            Movie movie = intent.getParcelableExtra("Movie");
+            mMovie = intent.getParcelableExtra("Movie");
 
-            mSynopsisTextView.setText(movie.getSynopsis());
+            mSynopsisTextView.setText(mMovie.getSynopsis());
 
 
 
-            mReleaseDateTextView.setText(dateFormatter.format(movie.getReleaseDate()));
-            mRatingTextView.setText(Double.toString(movie.getUserRating()) + "/10");
+            mReleaseDateTextView.setText(dateFormatter.format(mMovie.getReleaseDate()));
+            mRatingTextView.setText(Double.toString(mMovie.getUserRating()) + "/10");
 
-            Picasso.with(getContext()).load(movie.getPosterImageUri()).placeholder(R.mipmap.ic_launcher).into(mPosterImageView);
+            Picasso.with(getContext()).load(mMovie.getPosterImageUri()).placeholder(R.mipmap.ic_launcher).into(mPosterImageView);
 
-            ((MovieDetailActivity)getActivity()).setActionBarTitle(movie.getTitle());
-            ((MovieDetailActivity)getActivity()).setActionBarImageUri(movie.getBackdropImageUri());
+            ((MovieDetailActivity)getActivity()).setActionBarTitle(mMovie.getTitle());
+            ((MovieDetailActivity)getActivity()).setActionBarImageUri(mMovie.getBackdropImageUri());
         }
     }
 
@@ -58,5 +63,11 @@ public class MovieDetailActivityFragment extends Fragment {
         mPosterImageView = ((ImageView)rootView.findViewById(R.id.posterImageView));
 
         return rootView;
+    }
+
+    public void onFavButtonClick(View view){
+        ContentValues values = mMovie.getContentValues();
+
+        getActivity().getContentResolver().insert(MovieProvider.FavoriteMovies.CONTENT_URI, values);
     }
 }

@@ -1,8 +1,11 @@
 package com.squattyapple.android.popularmovies;
 
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+
+import com.squattyapple.android.popularmovies.data.FavoriteMovieColumns;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,6 +21,7 @@ public class Movie implements Parcelable {
     }
 
     private Movie(Parcel in) {
+        mDbId = in.readLong();
         mPosterImgUri = in.readString();
         mBackdropImgUri = in.readString();
         mTitle = in.readString();
@@ -50,6 +54,7 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(mDbId);
         dest.writeString(mPosterImgUri);
         dest.writeString(mBackdropImgUri);
         dest.writeString(mTitle);
@@ -57,6 +62,13 @@ public class Movie implements Parcelable {
         dest.writeDouble(mUserRating);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-DD");
         dest.writeString(dateFormat.format(mReleaseDate));
+    }
+
+    public long getDbId(){
+        return mDbId;
+    }
+    public void setDbId(long dbId){
+        mDbId = dbId;
     }
     public String getPosterImageUri(){
         return mPosterImgUri;
@@ -96,13 +108,23 @@ public class Movie implements Parcelable {
         this.mReleaseDate = releaseDate;
     }
 
+    public ContentValues getContentValues(){
+        ContentValues values = new ContentValues();
+        values.put(FavoriteMovieColumns.BACKDROP_PATH, mBackdropImgUri);
+        values.put(FavoriteMovieColumns.MOVIE_DB_ID, 123456);
+        values.put(FavoriteMovieColumns.POSTER_PATH, mPosterImgUri);
+        values.put(FavoriteMovieColumns.RELEASE_DATE, mReleaseDate.getTime());
+        values.put(FavoriteMovieColumns.TITLE, mTitle);
+        values.put(FavoriteMovieColumns.SYNOPSIS, mSynopsis);
+        values.put(FavoriteMovieColumns.VOTE_AVERAGE, mUserRating);
+        return values;
+    }
 
+    private long mDbId;
     private String mPosterImgUri;
     private String mBackdropImgUri;
     private String mTitle;
     private String mSynopsis;
     private double mUserRating;
     private Date mReleaseDate;
-
-
 }
