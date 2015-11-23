@@ -21,6 +21,7 @@ public class Utils {
                 Movie movie = new Movie();
                 JSONObject jsonMovie = movieArray.getJSONObject(i);
 
+                movie.setDbId(jsonMovie.getLong("id"));
                 movie.setmUserRating(jsonMovie.getDouble("vote_average"));
                 movie.setSynopsis(jsonMovie.getString("overview"));
                 movie.setTitle(jsonMovie.getString("original_title"));

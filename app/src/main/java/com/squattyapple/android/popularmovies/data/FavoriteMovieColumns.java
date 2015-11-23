@@ -8,7 +8,7 @@ public interface FavoriteMovieColumns {
     @DataType(DataType.Type.INTEGER) @PrimaryKey @AutoIncrement
     String _ID = "_id";
     @DataType(DataType.Type.INTEGER) @NotNull @Unique
-    String MOVIE_DB_ID = "movie_id_name";
+    String MOVIE_DB_ID = "movie_db_id";
     @DataType(DataType.Type.TEXT) @NotNull
     String TITLE = "title";
     @DataType(DataType.Type.INTEGER) @NotNull

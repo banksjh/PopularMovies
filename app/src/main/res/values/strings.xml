@@ -20,4 +20,5 @@
     <string name="poster_content_desc">Movie Poster</string>
     <string name="favorite_indicator_content_desc">Favorite Indicator</string>
     <string name="mark_as_fav_btn">Mark as Favorite</string>
+    <string name="remove_as_fav_btn">Remove Favorite</string>
 </resources>

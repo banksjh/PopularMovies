@@ -1,10 +1,10 @@
 package com.squattyapple.android.popularmovies;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-
 import com.squattyapple.android.popularmovies.data.FavoriteMovieColumns;
 
 import java.text.ParseException;
@@ -17,22 +17,28 @@ import java.util.Date;
 public class Movie implements Parcelable {
 
     public Movie(){
+    }
 
+    public Movie(Cursor cursor){
+        mId = cursor.getLong(cursor.getColumnIndex(FavoriteMovieColumns._ID));
+        mDbId = cursor.getLong(cursor.getColumnIndex(FavoriteMovieColumns.MOVIE_DB_ID));
+        mPosterImgUri = cursor.getString(cursor.getColumnIndex(FavoriteMovieColumns.POSTER_PATH));
+        mBackdropImgUri = cursor.getString(cursor.getColumnIndex(FavoriteMovieColumns.BACKDROP_PATH));
+        mTitle = cursor.getString(cursor.getColumnIndex(FavoriteMovieColumns.TITLE));
+        mSynopsis = cursor.getString(cursor.getColumnIndex(FavoriteMovieColumns.SYNOPSIS));
+        mUserRating = cursor.getDouble(cursor.getColumnIndex(FavoriteMovieColumns.VOTE_AVERAGE));
+        mReleaseDate = new Date(cursor.getLong(cursor.getColumnIndex(FavoriteMovieColumns.RELEASE_DATE)));
     }
 
     private Movie(Parcel in) {
+        mId = in.readLong();
         mDbId = in.readLong();
         mPosterImgUri = in.readString();
         mBackdropImgUri = in.readString();
         mTitle = in.readString();
         mSynopsis = in.readString();
         mUserRating = in.readDouble();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-DD");
-        try {
-            mReleaseDate = dateFormat.parse(in.readString());
-        } catch (ParseException e) {
-            Log.e("Movie", "Error parsing date while unpacking parcel", e);
-        }
+        mReleaseDate = new Date(in.readLong());
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -54,16 +60,22 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(mId);
         dest.writeLong(mDbId);
         dest.writeString(mPosterImgUri);
         dest.writeString(mBackdropImgUri);
         dest.writeString(mTitle);
         dest.writeString(mSynopsis);
         dest.writeDouble(mUserRating);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-DD");
-        dest.writeString(dateFormat.format(mReleaseDate));
+        dest.writeLong(mReleaseDate.getTime());
     }
 
+    public long getId(){
+        return mId;
+    }
+    public void setId(long id){
+        mId = id;
+    }
     public long getDbId(){
         return mDbId;
     }
@@ -111,7 +123,7 @@ public class Movie implements Parcelable {
     public ContentValues getContentValues(){
         ContentValues values = new ContentValues();
         values.put(FavoriteMovieColumns.BACKDROP_PATH, mBackdropImgUri);
-        values.put(FavoriteMovieColumns.MOVIE_DB_ID, 123456);
+        values.put(FavoriteMovieColumns.MOVIE_DB_ID, mDbId);
         values.put(FavoriteMovieColumns.POSTER_PATH, mPosterImgUri);
         values.put(FavoriteMovieColumns.RELEASE_DATE, mReleaseDate.getTime());
         values.put(FavoriteMovieColumns.TITLE, mTitle);
@@ -120,6 +132,7 @@ public class Movie implements Parcelable {
         return values;
     }
 
+    private long mId;
     private long mDbId;
     private String mPosterImgUri;
     private String mBackdropImgUri;

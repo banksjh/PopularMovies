@@ -36,7 +36,7 @@ public final class MovieProvider {
                 name = "MOVIE_ID",
                 path = Path.FAVORITE_MOVIES + "/#",
                 type = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + AUTHORITY + "/" + Path.FAVORITE_MOVIES,
-                whereColumn = FavoriteMovieColumns._ID,
+                whereColumn = FavoriteMovieColumns.MOVIE_DB_ID,
                 pathSegment = 1)
         public static Uri withId(long id){
             return buildUri(Path.FAVORITE_MOVIES, String.valueOf(id));

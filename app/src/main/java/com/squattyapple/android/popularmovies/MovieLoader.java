@@ -1,14 +1,19 @@
 package com.squattyapple.android.popularmovies;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
+
+import com.squattyapple.android.popularmovies.data.MovieProvider;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,7 +38,12 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
 
     @Override
     public ArrayList<Movie> loadInBackground() {
-        mMovies = loadFromServer();
+        if (mSortParam.equals(getContext().getString(R.string.pref_sort_by_popularity_value)) ||
+                mSortParam.equals(getContext().getString(R.string.pref_sort_by_rating_value))) {
+            mMovies = loadFromServer();
+        } else if (mSortParam.equals(getContext().getString(R.string.pref_sort_by_favorite_value))){
+            mMovies = loadFavorites();
+        }
         return mMovies;
     }
 
@@ -58,6 +68,19 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
         super.onReset();
 
         mMovies.clear();
+    }
+
+    private ArrayList<Movie> loadFavorites() {
+        ArrayList<Movie> movies = new ArrayList<>();
+
+        Cursor movieCursor = getContext().getContentResolver().query(MovieProvider.FavoriteMovies.CONTENT_URI, null, null, null, null);
+        if (movieCursor != null) {
+            while (movieCursor.moveToNext()) {
+                movies.add(new Movie(movieCursor));
+            }
+            movieCursor.close();
+        }
+        return movies;
     }
 
     private ArrayList<Movie> loadFromServer(){

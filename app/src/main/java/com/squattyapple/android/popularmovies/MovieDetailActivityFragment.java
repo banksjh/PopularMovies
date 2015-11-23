@@ -2,14 +2,17 @@ package com.squattyapple.android.popularmovies;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import com.squattyapple.android.popularmovies.data.FavoriteMovieColumns;
 import com.squattyapple.android.popularmovies.data.MovieProvider;
 
 import java.text.SimpleDateFormat;
@@ -23,8 +26,11 @@ public class MovieDetailActivityFragment extends Fragment {
     TextView mSynopsisTextView;
     TextView mReleaseDateTextView;
     TextView mRatingTextView;
+    Button mMarkAsFavButton;
 
     Movie mMovie;
+
+    private boolean mIsFavorite = false;
 
     public MovieDetailActivityFragment() {
     }
@@ -40,8 +46,6 @@ public class MovieDetailActivityFragment extends Fragment {
 
             mSynopsisTextView.setText(mMovie.getSynopsis());
 
-
-
             mReleaseDateTextView.setText(dateFormatter.format(mMovie.getReleaseDate()));
             mRatingTextView.setText(Double.toString(mMovie.getUserRating()) + "/10");
 
@@ -49,6 +53,12 @@ public class MovieDetailActivityFragment extends Fragment {
 
             ((MovieDetailActivity)getActivity()).setActionBarTitle(mMovie.getTitle());
             ((MovieDetailActivity)getActivity()).setActionBarImageUri(mMovie.getBackdropImageUri());
+
+            Cursor cur = getActivity().getContentResolver().query(MovieProvider.FavoriteMovies.withId(mMovie.getDbId()), new String[]{FavoriteMovieColumns.MOVIE_DB_ID}, null, null, null);
+            if (cur != null && cur.getCount() > 0){
+                mIsFavorite = true;
+                mMarkAsFavButton.setText(R.string.remove_as_fav_btn);
+            }
         }
     }
 
@@ -61,13 +71,21 @@ public class MovieDetailActivityFragment extends Fragment {
         mReleaseDateTextView = ((TextView)rootView.findViewById(R.id.releaseDateTextView));
         mRatingTextView = ((TextView)rootView.findViewById(R.id.ratingTextView));
         mPosterImageView = ((ImageView)rootView.findViewById(R.id.posterImageView));
+        mMarkAsFavButton = ((Button)rootView.findViewById(R.id.markAsFavButton));
 
+        mMarkAsFavButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mIsFavorite) {
+                    getActivity().getContentResolver().delete(MovieProvider.FavoriteMovies.withId(mMovie.getDbId()), null, null);
+                    mMarkAsFavButton.setText(R.string.mark_as_fav_btn);
+                } else {
+                    ContentValues values = mMovie.getContentValues();
+                    getActivity().getContentResolver().insert(MovieProvider.FavoriteMovies.CONTENT_URI, values);
+                    mMarkAsFavButton.setText(R.string.remove_as_fav_btn);
+                }
+            }
+        });
         return rootView;
-    }
-
-    public void onFavButtonClick(View view){
-        ContentValues values = mMovie.getContentValues();
-
-        getActivity().getContentResolver().insert(MovieProvider.FavoriteMovies.CONTENT_URI, values);
     }
 }
