@@ -2,7 +2,7 @@ package com.squattyapple.android.popularmovies.data;
 
 import net.simonvt.schematic.annotation.*;
 
-@Database(version = MovieDatabase.VERSION)
+@Database(version = MovieDatabase.VERSION, packageName = "com.squattyapple.android.popularmovies.data.provider")
 public final class MovieDatabase {
     public static final int VERSION = 1;
 

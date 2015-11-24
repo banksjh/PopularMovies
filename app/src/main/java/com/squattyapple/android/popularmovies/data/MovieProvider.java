@@ -5,7 +5,9 @@ import android.net.Uri;
 
 import net.simonvt.schematic.annotation.*;
 
-@ContentProvider(authority = MovieProvider.AUTHORITY, database = MovieDatabase.class)
+@ContentProvider(authority = MovieProvider.AUTHORITY,
+        database = MovieDatabase.class,
+        packageName = "com.squattyapple.android.popularmovies.data.provider")
 public final class MovieProvider {
 
     public static final String AUTHORITY = "com.squattyapple.android.popularmovies.MovieProvider";

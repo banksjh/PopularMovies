@@ -8,9 +8,7 @@ import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.test.AndroidTestCase;
-
 import com.squattyapple.android.popularmovies.TestUtilities;
-
 
 public class TestProvider extends AndroidTestCase {
     public static final String LOG_TAG = TestProvider.class.getSimpleName();
@@ -24,7 +22,7 @@ public class TestProvider extends AndroidTestCase {
     public void testProviderRegistry(){
         PackageManager pm = mContext.getPackageManager();
 
-        ComponentName componentName = new ComponentName(mContext.getPackageName(), com.squattyapple.android.popularmovies.data.generated.MovieProvider.class.getName());
+        ComponentName componentName = new ComponentName(mContext.getPackageName(), com.squattyapple.android.popularmovies.data.provider.MovieProvider.class.getName());
 
         try {
             ProviderInfo providerInfo = pm.getProviderInfo(componentName, 0);
@@ -65,7 +63,7 @@ public class TestProvider extends AndroidTestCase {
 
         //Test query specific movie
         Cursor movieCursor = mContext.getContentResolver().query(
-                MovieProvider.FavoriteMovies.withId(movieRowId),
+                MovieProvider.FavoriteMovies.withId(123456),
                 null,
                 null,
                 null,

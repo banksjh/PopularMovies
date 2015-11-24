@@ -30,7 +30,7 @@
                 android:value=".MainActivity" />
         </activity>
         <provider
-            android:name=".data.generated.MovieProvider"
+            android:name="com.squattyapple.android.popularmovies.data.provider.MovieProvider"
             android:authorities="com.squattyapple.android.popularmovies.MovieProvider">
         </provider>
     </application>
