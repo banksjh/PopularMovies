@@ -37,7 +37,7 @@ public class MovieListFragment extends Fragment implements LoaderManager.LoaderC
 
         movieGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(getContext(), MovieDetailActivity.class).putExtra("Movie", ((Movie) parent.getItemAtPosition(position))));
+                ((Callback)getActivity()).onMovieSelected((Movie) parent.getItemAtPosition(position));
             }
         });
 
@@ -68,5 +68,9 @@ public class MovieListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
         mMovieAdapter.clear();
+    }
+
+    public interface Callback{
+        void onMovieSelected(Movie movie);
     }
 }

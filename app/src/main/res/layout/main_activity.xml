@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:fitsSystemWindows="true"
-    tools:context=".MovieListActivity">
+    tools:context=".MainActivity">
 
     <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
         android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
@@ -24,6 +24,13 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_movie_list" />
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/movie_list_fragment"
+        android:name="com.squattyapple.android.popularmovies.MovieListFragment"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:layout="@layout/fragment_movie_list" />
 
 </android.support.design.widget.CoordinatorLayout>

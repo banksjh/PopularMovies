@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieDetailActivityFragment extends Fragment {
+public class MovieDetailFragment extends Fragment {
 
     ImageView mPosterImageView;
     TextView mSynopsisTextView;
@@ -32,7 +32,16 @@ public class MovieDetailActivityFragment extends Fragment {
 
     private boolean mIsFavorite = false;
 
-    public MovieDetailActivityFragment() {
+    public MovieDetailFragment() {
+    }
+
+    public static MovieDetailFragment getInstance(Movie movie){
+        MovieDetailFragment instance = new MovieDetailFragment();
+        Bundle args = new Bundle();
+
+        args.putParcelable("Movie", movie);
+        instance.setArguments(args);
+        return instance;
     }
 
     @Override
@@ -41,25 +50,31 @@ public class MovieDetailActivityFragment extends Fragment {
 
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy");
         Intent intent = getActivity().getIntent();
-        if (intent != null){
+        if (intent != null && intent.hasExtra("Movie")) {
             mMovie = intent.getParcelableExtra("Movie");
 
-            mSynopsisTextView.setText(mMovie.getSynopsis());
-
-            mReleaseDateTextView.setText(dateFormatter.format(mMovie.getReleaseDate()));
-            mRatingTextView.setText(Double.toString(mMovie.getUserRating()) + "/10");
-
-            Picasso.with(getContext()).load(mMovie.getPosterImageUri()).placeholder(R.mipmap.ic_launcher).into(mPosterImageView);
-
+            //This is only done in two-pane mode
             ((MovieDetailActivity)getActivity()).setActionBarTitle(mMovie.getTitle());
             ((MovieDetailActivity)getActivity()).setActionBarImageUri(mMovie.getBackdropImageUri());
-
-            Cursor cur = getActivity().getContentResolver().query(MovieProvider.FavoriteMovies.withId(mMovie.getDbId()), new String[]{FavoriteMovieColumns.MOVIE_DB_ID}, null, null, null);
-            if (cur != null && cur.getCount() > 0){
-                mIsFavorite = true;
-                mMarkAsFavButton.setText(R.string.remove_as_fav_btn);
-            }
+        } else if (getArguments() != null){
+            mMovie = getArguments().getParcelable("Movie");
+        } else {
+            return;
         }
+
+        mSynopsisTextView.setText(mMovie.getSynopsis());
+
+        mReleaseDateTextView.setText(dateFormatter.format(mMovie.getReleaseDate()));
+        mRatingTextView.setText(Double.toString(mMovie.getUserRating()) + "/10");
+
+        Picasso.with(getContext()).load(mMovie.getPosterImageUri()).placeholder(R.mipmap.ic_launcher).into(mPosterImageView);
+
+        Cursor cur = getActivity().getContentResolver().query(MovieProvider.FavoriteMovies.withId(mMovie.getDbId()), new String[]{FavoriteMovieColumns.MOVIE_DB_ID}, null, null, null);
+        if (cur != null && cur.getCount() > 0){
+            mIsFavorite = true;
+            mMarkAsFavButton.setText(R.string.remove_as_fav_btn);
+        }
+        mMarkAsFavButton.setVisibility(View.VISIBLE);
     }
 
     @Override

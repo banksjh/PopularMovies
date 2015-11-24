@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:showIn="@layout/activity_movie_list" tools:context=".MovieListActivityFragment">
+    tools:showIn="@layout/main_activity" tools:context=".MovieListActivityFragment">
 
     <GridView
         android:layout_width="fill_parent"
