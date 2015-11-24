@@ -22,11 +22,11 @@ import java.text.SimpleDateFormat;
  */
 public class MovieDetailFragment extends Fragment {
 
-    ImageView mPosterImageView;
-    TextView mSynopsisTextView;
-    TextView mReleaseDateTextView;
-    TextView mRatingTextView;
-    Button mMarkAsFavButton;
+    private ImageView mPosterImageView;
+    private TextView mSynopsisTextView;
+    private TextView mReleaseDateTextView;
+    private TextView mRatingTextView;
+    private Button mMarkAsFavButton;
 
     Movie mMovie;
 
@@ -73,7 +73,9 @@ public class MovieDetailFragment extends Fragment {
         if (cur != null && cur.getCount() > 0){
             mIsFavorite = true;
             mMarkAsFavButton.setText(R.string.remove_as_fav_btn);
+            cur.close();
         }
+
         mMarkAsFavButton.setVisibility(View.VISIBLE);
     }
 
