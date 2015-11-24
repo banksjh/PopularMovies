@@ -79,10 +79,12 @@ public class MovieDetailActivityFragment extends Fragment {
                 if (mIsFavorite) {
                     getActivity().getContentResolver().delete(MovieProvider.FavoriteMovies.withId(mMovie.getDbId()), null, null);
                     mMarkAsFavButton.setText(R.string.mark_as_fav_btn);
+                    mIsFavorite = false;
                 } else {
                     ContentValues values = mMovie.getContentValues();
                     getActivity().getContentResolver().insert(MovieProvider.FavoriteMovies.CONTENT_URI, values);
                     mMarkAsFavButton.setText(R.string.remove_as_fav_btn);
+                    mIsFavorite = true;
                 }
             }
         });
