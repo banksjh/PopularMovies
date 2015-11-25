@@ -9,6 +9,26 @@ import org.json.*;
 
 public class Utils {
 
+    public static ArrayList<Review> parsReviewsFromJson (String jsonStr){
+        ArrayList<Review> reviews = new ArrayList<>();
+
+        try{
+            JSONObject result = new JSONObject(jsonStr);
+            JSONArray reviewArray = result.getJSONArray("results");
+
+            for (int i = 0; i < reviewArray.length(); i++){
+                JSONObject reviewObject = reviewArray.getJSONObject(i);
+                Review review = new Review(reviewObject.getString("author"), reviewObject.getString("content"));
+
+                reviews.add(review);
+            }
+
+        } catch (JSONException e) {
+            Log.e("Utils", "Logged a JSON Exception", e);
+        }
+        return reviews;
+    }
+
     public static ArrayList<Movie> parseMoviesFromJson (String jsonStr){
         ArrayList<Movie> movies = new ArrayList<>();
 

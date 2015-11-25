@@ -15,5 +15,6 @@
         android:drawSelectorOnTop="true"
         android:contextClickable="false"
         android:focusable="false"
-        android:focusableInTouchMode="false" />
+        android:focusableInTouchMode="false"
+        android:scrollIndicators="none" />
 </FrameLayout>

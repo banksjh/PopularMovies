@@ -3,30 +3,43 @@ package com.squattyapple.android.popularmovies;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squattyapple.android.popularmovies.data.FavoriteMovieColumns;
 import com.squattyapple.android.popularmovies.data.MovieProvider;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailFragment extends Fragment {
+    private final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
 
     private ImageView mPosterImageView;
     private TextView mSynopsisTextView;
     private TextView mReleaseDateTextView;
     private TextView mRatingTextView;
     private Button mMarkAsFavButton;
+    private ReviewAdapter mReviewAdapter;
 
     Movie mMovie;
 
@@ -75,6 +88,8 @@ public class MovieDetailFragment extends Fragment {
             mMarkAsFavButton.setText(R.string.remove_as_fav_btn);
             cur.close();
         }
+        RetrieveReviewsTask reviewsTask = new RetrieveReviewsTask();
+        reviewsTask.execute();
 
         mMarkAsFavButton.setVisibility(View.VISIBLE);
     }
@@ -89,6 +104,10 @@ public class MovieDetailFragment extends Fragment {
         mRatingTextView = ((TextView)rootView.findViewById(R.id.ratingTextView));
         mPosterImageView = ((ImageView)rootView.findViewById(R.id.posterImageView));
         mMarkAsFavButton = ((Button)rootView.findViewById(R.id.markAsFavButton));
+
+        mReviewAdapter = new ReviewAdapter(getContext(), 0);
+
+        ((ListView)rootView.findViewById(R.id.ratingListView)).setAdapter(mReviewAdapter);
 
         mMarkAsFavButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,5 +125,83 @@ public class MovieDetailFragment extends Fragment {
             }
         });
         return rootView;
+    }
+
+    private class RetrieveReviewsTask extends AsyncTask<Void, Void, ArrayList<Review>> {
+
+        @Override
+        protected ArrayList<Review> doInBackground(Void... params) {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            String jsonStr = null;
+
+            final String MOVIE_DB_BASE_URL = "http://api.themoviedb.org/3/movie";
+            final String API_KEY_PARAM = "api_key";
+            final String REVIEW_PARAM = "reviews";
+
+
+            Uri queryUri;
+
+            queryUri = Uri.parse(MOVIE_DB_BASE_URL).buildUpon()
+                    .appendPath(mMovie.getDbId() + "")
+                    .appendPath(REVIEW_PARAM)
+                    .appendQueryParameter(API_KEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY).build();
+
+            try {
+                URL url = new URL(queryUri.toString());
+
+                // Create the request to TheMovieDb, and open the connection
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuilder buffer = new StringBuilder();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line);
+                    buffer.append("\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+
+                jsonStr = buffer.toString();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally{
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+            return Utils.parsReviewsFromJson(jsonStr);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Review> result){
+            mReviewAdapter.clear();
+            mReviewAdapter.addAll(result);
+        }
     }
 }
