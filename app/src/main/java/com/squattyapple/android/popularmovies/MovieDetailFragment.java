@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squattyapple.android.popularmovies.data.FavoriteMovieColumns;
@@ -27,6 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -39,7 +40,6 @@ public class MovieDetailFragment extends Fragment {
     private TextView mReleaseDateTextView;
     private TextView mRatingTextView;
     private Button mMarkAsFavButton;
-    private ReviewAdapter mReviewAdapter;
 
     Movie mMovie;
 
@@ -91,7 +91,7 @@ public class MovieDetailFragment extends Fragment {
         RetrieveReviewsTask reviewsTask = new RetrieveReviewsTask();
         reviewsTask.execute();
 
-        mMarkAsFavButton.setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.scrollView).setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -104,10 +104,6 @@ public class MovieDetailFragment extends Fragment {
         mRatingTextView = ((TextView)rootView.findViewById(R.id.ratingTextView));
         mPosterImageView = ((ImageView)rootView.findViewById(R.id.posterImageView));
         mMarkAsFavButton = ((Button)rootView.findViewById(R.id.markAsFavButton));
-
-        mReviewAdapter = new ReviewAdapter(getContext(), 0);
-
-        ((ListView)rootView.findViewById(R.id.ratingListView)).setAdapter(mReviewAdapter);
 
         mMarkAsFavButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +121,20 @@ public class MovieDetailFragment extends Fragment {
             }
         });
         return rootView;
+    }
+
+    protected void addReviews(ArrayList<Review> reviews) {
+        LinearLayout reviewList = (LinearLayout)getActivity().findViewById(R.id.ratingLinearLayout);
+
+        if (reviews.size() > 0) reviewList.setVisibility(View.VISIBLE);
+
+        for (Review review : reviews){
+            View view = getLayoutInflater(null).inflate(R.layout.review_list_item, null);
+            ((TextView)view.findViewById(R.id.reviewAuthorTextView)).setText(review.getReviewer());
+            ((TextView)view.findViewById(R.id.reviewContentTextView)).setText(review.getReview());
+
+            reviewList.addView(view);
+        }
     }
 
     private class RetrieveReviewsTask extends AsyncTask<Void, Void, ArrayList<Review>> {
@@ -200,8 +210,7 @@ public class MovieDetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<Review> result){
-            mReviewAdapter.clear();
-            mReviewAdapter.addAll(result);
+            addReviews(result);
         }
     }
 }
