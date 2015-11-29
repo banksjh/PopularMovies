@@ -91,6 +91,9 @@ public class MovieDetailFragment extends Fragment {
         RetrieveReviewsTask reviewsTask = new RetrieveReviewsTask();
         reviewsTask.execute();
 
+        RetrieveVideosTask videosTask = new RetrieveVideosTask();
+        videosTask.execute();
+
         getActivity().findViewById(R.id.scrollView).setVisibility(View.VISIBLE);
     }
 
@@ -134,6 +137,28 @@ public class MovieDetailFragment extends Fragment {
             ((TextView)view.findViewById(R.id.reviewContentTextView)).setText(review.getReview());
 
             reviewList.addView(view);
+        }
+    }
+
+    protected void addVideos(ArrayList<Video> videos){
+        LinearLayout videoList = (LinearLayout)getActivity().findViewById(R.id.videoLinearLayout);
+
+        if (videos.size() > 0) videoList.setVisibility(View.VISIBLE);
+
+        for (Video video : videos){
+            View view = getLayoutInflater(null).inflate(R.layout.video_list_item, null);
+            ((TextView)view.findViewById(R.id.videoTitleTextview)).setText(video.getTitle());
+            view.setTag(video.getUrl());
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent launchVideoIntent = new Intent();
+                    launchVideoIntent.setData(Uri.parse((String)v.getTag()));
+
+                    startActivity(launchVideoIntent);
+                }
+            });
+            videoList.addView(view);
         }
     }
 
@@ -211,6 +236,83 @@ public class MovieDetailFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Review> result){
             addReviews(result);
+        }
+    }
+
+    private class RetrieveVideosTask extends AsyncTask<Void, Void, ArrayList<Video>>{
+
+        @Override
+        protected ArrayList<Video> doInBackground(Void... params) {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            String jsonStr = null;
+
+            final String MOVIE_DB_BASE_URL = "http://api.themoviedb.org/3/movie";
+            final String API_KEY_PARAM = "api_key";
+            final String VIDEO_PARAM = "videos";
+
+
+            Uri queryUri;
+
+            queryUri = Uri.parse(MOVIE_DB_BASE_URL).buildUpon()
+                    .appendPath(mMovie.getDbId() + "")
+                    .appendPath(VIDEO_PARAM)
+                    .appendQueryParameter(API_KEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY).build();
+
+            try {
+                URL url = new URL(queryUri.toString());
+
+                // Create the request to TheMovieDb, and open the connection
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuilder buffer = new StringBuilder();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line);
+                    buffer.append("\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+
+                jsonStr = buffer.toString();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally{
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+            return Utils.parseVideosFromJson(jsonStr);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Video> result){
+            addVideos(result);
         }
     }
 }

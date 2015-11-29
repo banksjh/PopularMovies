@@ -9,6 +9,8 @@ import org.json.*;
 
 public class Utils {
 
+    private static final String YOUTUBE_URL = "http://www.youtube.com/watch?v=";
+
     public static ArrayList<Review> parsReviewsFromJson (String jsonStr){
         ArrayList<Review> reviews = new ArrayList<>();
 
@@ -60,5 +62,29 @@ public class Utils {
         }
 
         return movies;
+    }
+
+    public static ArrayList<Video> parseVideosFromJson (String jsonStr){
+        ArrayList<Video> videos = new ArrayList<>();
+
+        try{
+            JSONObject result = new JSONObject(jsonStr);
+            JSONArray videoArray = result.getJSONArray("results");
+
+            for (int i = 0; i < videoArray.length(); i++){
+                Video video = new Video();
+                JSONObject jsonVideo = videoArray.getJSONObject(i);
+                if (jsonVideo.getString("site").equals("YouTube")){
+                    video.setTitle(jsonVideo.getString("name"));
+                    video.setUrl(YOUTUBE_URL + jsonVideo.getString("key"));
+
+                    videos.add(video);
+                }
+            }
+
+        } catch (JSONException e){
+            Log.e("Utils", "Logged a JSON Exception", e);
+        }
+        return videos;
     }
 }
