@@ -40,20 +40,20 @@
             android:baselineAligned="false">
 
             <fragment
-                    android:id="@+id/movie_list_fragment"
-                    android:name="com.squattyapple.android.popularmovies.MovieListFragment"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    tools:layout="@layout/fragment_movie_list" />
+                android:id="@+id/movie_list_fragment"
+                android:name="com.squattyapple.android.popularmovies.MovieListFragment"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="5"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:layout="@layout/fragment_movie_list" />
 
             <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="7"
-                    android:id="@+id/movie_detail_container"
-                    android:background="#FFFFFF"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="7"
+                android:id="@+id/movie_detail_container"
+                android:background="#FFFFFF"
                 tools:ignore="InconsistentLayout" />
         </LinearLayout>
     </LinearLayout>

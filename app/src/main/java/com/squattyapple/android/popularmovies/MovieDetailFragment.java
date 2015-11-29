@@ -71,6 +71,8 @@ public class MovieDetailFragment extends Fragment {
             ((MovieDetailActivity)getActivity()).setActionBarImageUri(mMovie.getBackdropImageUri());
         } else if (getArguments() != null){
             mMovie = getArguments().getParcelable("Movie");
+            Picasso.with(getContext()).load(mMovie.getBackdropImageUri()).into((ImageView)getActivity().findViewById(R.id.movie_backdrop_image));
+            ((TextView)getActivity().findViewById(R.id.titleTextView)).setText(mMovie.getTitle());
         } else {
             return;
         }
