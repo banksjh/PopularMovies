@@ -149,8 +149,7 @@ public class MovieDetailFragment extends Fragment {
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         shareIntent.setType("text/plain");
         Video video = mVideos.get(0);
-        String shareText = getString(R.string.watch_video) + " " + video.getTitle() + " " + video.getUrl();
-        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, video.getUrl());
         return shareIntent;
     }
 
