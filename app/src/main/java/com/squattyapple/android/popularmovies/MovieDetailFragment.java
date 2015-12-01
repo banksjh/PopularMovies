@@ -1,5 +1,6 @@
 package com.squattyapple.android.popularmovies;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -128,38 +129,48 @@ public class MovieDetailFragment extends Fragment {
     }
 
     protected void addReviews(ArrayList<Review> reviews) {
-        LinearLayout reviewList = (LinearLayout)getActivity().findViewById(R.id.ratingLinearLayout);
+        Activity activity = getActivity();
 
-        if (reviews.size() > 0) reviewList.setVisibility(View.VISIBLE);
+        //we could have become disconnected from the activity while the async task was running
+        if (activity != null) {
+            LinearLayout reviewList = (LinearLayout) activity.findViewById(R.id.ratingLinearLayout);
 
-        for (Review review : reviews){
-            View view = getLayoutInflater(null).inflate(R.layout.review_list_item, null);
-            ((TextView)view.findViewById(R.id.reviewAuthorTextView)).setText(review.getReviewer());
-            ((TextView)view.findViewById(R.id.reviewContentTextView)).setText(review.getReview());
+            if (reviews.size() > 0) reviewList.setVisibility(View.VISIBLE);
 
-            reviewList.addView(view);
+            for (Review review : reviews) {
+                View view = getLayoutInflater(null).inflate(R.layout.review_list_item, null);
+                ((TextView) view.findViewById(R.id.reviewAuthorTextView)).setText(review.getReviewer());
+                ((TextView) view.findViewById(R.id.reviewContentTextView)).setText(review.getReview());
+
+                reviewList.addView(view);
+            }
         }
     }
 
     protected void addVideos(ArrayList<Video> videos){
-        LinearLayout videoList = (LinearLayout)getActivity().findViewById(R.id.videoLinearLayout);
+        Activity activity = getActivity();
 
-        if (videos.size() > 0) videoList.setVisibility(View.VISIBLE);
+        //we could have become disconnected from the activity while the async task was running
+        if (activity != null) {
+            LinearLayout videoList = (LinearLayout) activity.findViewById(R.id.videoLinearLayout);
 
-        for (Video video : videos){
-            View view = getLayoutInflater(null).inflate(R.layout.video_list_item, null);
-            ((TextView)view.findViewById(R.id.videoTitleTextview)).setText(video.getTitle());
-            view.setTag(video.getUrl());
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent launchVideoIntent = new Intent();
-                    launchVideoIntent.setData(Uri.parse((String)v.getTag()));
+            if (videos.size() > 0) videoList.setVisibility(View.VISIBLE);
 
-                    startActivity(launchVideoIntent);
-                }
-            });
-            videoList.addView(view);
+            for (Video video : videos) {
+                View view = getLayoutInflater(null).inflate(R.layout.video_list_item, null);
+                ((TextView) view.findViewById(R.id.videoTitleTextview)).setText(video.getTitle());
+                view.setTag(video.getUrl());
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent launchVideoIntent = new Intent();
+                        launchVideoIntent.setData(Uri.parse((String) v.getTag()));
+
+                        startActivity(launchVideoIntent);
+                    }
+                });
+                videoList.addView(view);
+            }
         }
     }
 
