@@ -8,8 +8,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -40,8 +45,12 @@ public class MovieDetailFragment extends Fragment {
     private TextView mReleaseDateTextView;
     private TextView mRatingTextView;
     private Button mMarkAsFavButton;
+    private ShareActionProvider mShareActionProvider;
+    private Menu mOptionsMenu;
 
-    Movie mMovie;
+    private Movie mMovie;
+    private ArrayList<Video> mVideos;
+    private ArrayList<Review> mReviews;
 
     private boolean mIsFavorite = false;
 
@@ -60,7 +69,7 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        setHasOptionsMenu(true);
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy");
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra("Movie")) {
@@ -128,6 +137,32 @@ public class MovieDetailFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.movie_detail_menu, menu);
+        mOptionsMenu = menu;
+        menu.findItem(R.id.action_share).setVisible(false);
+    }
+
+    private Intent createShareMovieIntent(){
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        shareIntent.setType("text/plain");
+        Video video = mVideos.get(0);
+        String shareText = getString(R.string.watch_video) + " " + video.getTitle() + " " + video.getUrl();
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+        return shareIntent;
+    }
+
+    private void setupShareAction(){
+        if (mVideos != null && mVideos.size() > 0) {
+            MenuItem shareItem = mOptionsMenu.findItem(R.id.action_share);
+            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+            mShareActionProvider.setShareIntent(createShareMovieIntent());
+            shareItem.setVisible(true);
+        }
+    }
+
     protected void addReviews(ArrayList<Review> reviews) {
         Activity activity = getActivity();
 
@@ -171,6 +206,9 @@ public class MovieDetailFragment extends Fragment {
                 });
                 videoList.addView(view);
             }
+
+            //only show share action after videos are loaded
+            setupShareAction();
         }
     }
 
@@ -247,7 +285,8 @@ public class MovieDetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<Review> result){
-            addReviews(result);
+            mReviews = result;
+            addReviews(mReviews);
         }
     }
 
@@ -324,7 +363,8 @@ public class MovieDetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<Video> result){
-            addVideos(result);
+            mVideos = result;
+            addVideos(mVideos);
         }
     }
 }

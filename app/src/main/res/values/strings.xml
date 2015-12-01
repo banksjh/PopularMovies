@@ -20,4 +20,6 @@
     <string name="remove_as_fav_btn">Remove Favorite</string>
     <string name="reviews_label">Reviews</string>
     <string name="videos_label">Videos</string>
+    <string name="action_share">Share</string>
+    <string name="watch_video">Watch</string>
 </resources>
