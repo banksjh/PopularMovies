@@ -27,7 +27,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -232,7 +231,7 @@ public class MovieDetailFragment extends Fragment {
                     }
                 }
             }
-            return Utils.parsReviewsFromJson(jsonStr);
+            return Utils.parseReviewsFromJson(jsonStr);
         }
 
         @Override
